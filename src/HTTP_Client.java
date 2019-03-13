@@ -28,11 +28,15 @@ public class HTTP_Client {
          outToServer.writeBytes(commandFromClient(argv, path)); //chose: writeBytes, writeChars.
          outToServer.writeBytes("Host: " + Host);
          String inputLine;
+         System.out.println(inFromServer);
+         System.out.println(inFromServer.readLine());
+         System.out.println("lolz");
 		 while ((inputLine = inFromServer.readLine()) != null) {
+			 
              System.out.println(inputLine);
              //WriteToFile(inputLine, ??); //write to file, store response in an HTML file locally
-     }
-
+             }
+         System.out.println("lol");
 		 
 //Scan local html file. Retrieve embedded images. store them locally as well (GET).
 //retrieve embedded_objects: search the html file for <img retrieve from the src between the brackets.
