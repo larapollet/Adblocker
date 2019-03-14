@@ -12,19 +12,18 @@ public class HTTP_Server {
 	 ServerSocket welcomeSocket = new ServerSocket(8000);
 	 while(true)
 	 {
-	 System.out.println("gdverdomme");
 	 Socket connectionSocket = welcomeSocket.accept();
-	 System.out.println("lol1");
 	 BufferedReader inFromClient = new BufferedReader(new InputStreamReader (connectionSocket.getInputStream()));
-	 System.out.println("lol");
 	 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 	 System.out.println("Received: " );
 	 String clientSentence = inFromClient.readLine();
 	 System.out.println("Received: " + clientSentence);
 	 String serverarg[] = clientSentence.split("\\s+");
 	 String responseFromServer = executeCommand(serverarg);
+	 System.out.println(executeCommand(serverarg));
 	 //String capsSentence = clientSentence.toUpperCase() + '\n';
 	 outToClient.writeBytes(responseFromServer);
+	 
 	 }}
 //als je wilt weten of je request gedaan is: content length is niet altijd even accuraat. Check de laatste aantal bytes.
 	private static String executeCommand (String[] serverarg) { //serverarg = command , path, HTTP/1.1
@@ -40,7 +39,7 @@ public class HTTP_Server {
 			   //VERWERKEN VAN HET GET COMMAND?
 			   //EMBEDDED IMAGES WEG KRIJGEN IN GET COMMAND
 			   //content-lenght or transfer encoding.
-			   responseFromServer = "HTTP/1.1 200 OK";
+			   responseFromServer = "HTTP/1.1 200 OK '\\n'";
 	
 			    URL url;
 			    InputStream is = null;
@@ -57,9 +56,9 @@ public class HTTP_Server {
 			            responseFromServer += line; //Moet dat niet met witte lijnen onderscheiden worden?
 			        } //Vraag: Moet je deze 1 voor 1 toevoegen aan de OutToClient?
 			    } catch (MalformedURLException mue) {
-			    		responseFromServer = "HTTP/1.1 404 Not Found/Bad Request";
+			    		responseFromServer = "HTTP/1.1 404 Not Found/Bad Request \n";
 			    } catch (IOException ioe) {
-			         responseFromServer = "HTTP/1.1 404 Not Found"; //Is dit de juiste error code?
+			         responseFromServer = "HTTP/1.1 404 Not Found \n"; //Is dit de juiste error code?
 			    } 
 			   return responseFromServer;
 		   

@@ -9,6 +9,7 @@ import java.io.*;
 public class HTTP_Client {
 	 public static void main(String argv[]) throws Exception{  //argv[] = ["HTTPCommand", "URI" , "port", HTTPVERSION]
 		 String unedited_uri = argv[1];
+		 
 		 if (unedited_uri.startsWith("http://") == false)
 			 unedited_uri = "http://" + unedited_uri;
 		 
@@ -19,31 +20,27 @@ public class HTTP_Client {
 		 
 		 int port = Integer.parseInt(argv[2]); //Default port = 80
 		 
-		 // Make a connection given a certain Host and a certain port.
 		 Socket clientSocket = new Socket(Host, port);
-		 System.out.println(Host);
 		 
 		 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 		 String request = commandFromClient(argv, path) + System.lineSeparator() + "Host: " + Host;
-         outToServer.writeBytes(request); //chose: writeBytes, writeChars.
+          outToServer.writeBytes(request); //chose: writeBytes, writeChars.
          
 //         outToServer.writeBytes(commandFromClient(argv, path));
 //         outToServer.writeBytes("Host: " + Host);$
         
 //         StringBuilder responseBuffer = new StringBuilder();
-//         System.out.println(outToServer);
-//         responseBuffer.append( inFromServer.readLine());
+//         responseBuffer.append(inFromServer.readLine());
 //         System.out.println(responseBuffer);
-//CreateFile(Http); //TODO: ik denk niet dat dit correct gemaakt is.
-         
+
          String inputLine;
 		 while ((inputLine = inFromServer.readLine()) != null) {
-			System.out.println("lol");
-             System.out.println(inputLine);
-             //WriteToFile(inputLine, ??); //write to file, store response in an HTML file locally
-             }
+             System.out.println(inputLine);}
+		 
+ //WriteToFile(inputLine, ??); //write to file, store response in an HTML file locally
+             
 
 		 
 		 //close stream?
@@ -106,6 +103,7 @@ public class HTTP_Client {
 //			e.printStackTrace();
 //		}
 //	}
+	//CreateFile(Http); //TODO: ik denk niet dat dit correct gemaakt is.
 	//TODO: third part of the assignment = filter out the ads. (How do you know wheter an image is an ad?)
 }
 
