@@ -5,7 +5,7 @@ import java.net.*;
 
 public class HTTP_Server {
 	
-	//SERVER SHOULD BE MULTITHREADED!! HOST HEADER FEELD IS MANDATORY!! If-modified-since-header needed.
+	//SERVER SHOULD BE MULTITHREADED!! 
 	//how to add third party client?? 
 	 public static void main(String argv[]) throws Exception
 	 {
@@ -20,42 +20,40 @@ public class HTTP_Server {
 	 System.out.println("Received: " + clientCommand);
 	 System.out.println("Received2: " + clientHost);
 	 String serverarg[] = clientCommand.split("\\s+");
-	 String responseFromServer = executeCommand(serverarg);
-	 System.out.println(executeCommand(serverarg));
+	 String Hostarg[] = clientHost.split("\\s+");
+	 String responseFromServer = executeCommand(serverarg[0], serverarg[1], Hostarg[1]);
+	 System.out.println(executeCommand(serverarg[0], serverarg[1],Hostarg[1]));
 	 //String capsSentence = clientSentence.toUpperCase() + '\n';
 	 outToClient.writeBytes(responseFromServer);
 	 
 	 }}
-//als je wilt weten of je request gedaan is: content length is niet altijd even accuraat. Check de laatste aantal bytes.
-	private static String executeCommand (String[] serverarg) { //serverarg = command , path, HTTP/1.1
+
+	private static String executeCommand (String command, String path, String Host) { //serverarg = command , path, HTTP/1.1
 		//400 bad request: when host header not added.
-		String command = serverarg[0];
-		String path = serverarg[1];
-		String Host = ""; //Host: Should be gotten from the client...
 		String responseFromServer = new String();
 		switch(command) {
 		   case "GET" :
+			   //If-modified-since-header needed.
 			   //als server niet responds: 404 not found?
 			   //content lenght or chunked headers!
 			   //VERWERKEN VAN HET GET COMMAND?
 			   //EMBEDDED IMAGES WEG KRIJGEN IN GET COMMAND
 			   //content-lenght or transfer encoding.
-			    responseFromServer = "HTTP/1.1 200 OK \n";
-	
+			   //als je wilt weten of je request gedaan is: content length is niet altijd even accuraat. Check de laatste aantal bytes.
 			    URL url;
 			    InputStream is = null;
 			    BufferedReader buffer;
 			    String line;
 			
 			    try {
-			        url = new URL(Host + path //?
-			        		);
+			        url = new URL(Host + path);
 			        is = url.openStream();  // throws an IOException
 			        buffer = new BufferedReader(new InputStreamReader(is));
-			
+			        responseFromServer = "HTTP/1.1 200 OK \n";
+			        System.out.println("oeps");
 			        while ((line = buffer.readLine()) != null) {
-			            responseFromServer += line; //Moet dat niet met witte lijnen onderscheiden worden?
-			        } //Vraag: Moet je deze 1 voor 1 toevoegen aan de OutToClient?
+			            responseFromServer += line + "\n";
+			        }
 			    } catch (MalformedURLException mue) {
 			    		responseFromServer = "HTTP/1.1 404 Not Found/Bad Request \n";
 			    } catch (IOException ioe) {
@@ -69,19 +67,15 @@ public class HTTP_Server {
 			   //For PUT and POST commands, your user should read a string from an interactive command prompt and send that onwards. 
 			   //These two commands will be tested with your HTTP server program.
 			   //user input should be appended to an existing file on the server.
-			   responseFromServer = "";
+			   responseFromServer = "HTTP/1.1 200 OK \n";
 			   return responseFromServer;
 		      
 		   case "PUT" :
-			   //For PUT and POST commands, your user should read a string from an interactive command prompt and send that onwards. 
-			   //These two commands will be tested with your HTTP server program.
 			   //user input stored in new text file on the server. (same directory)
-			   responseFromServer = "";
+			   responseFromServer = "HTTP/1.1 200 OK \n";
 			   return responseFromServer;
-			  
+
 		   case "HEAD" :
-			   
-			   
 			   responseFromServer = "";
 			   return responseFromServer;
 			  
