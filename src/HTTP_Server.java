@@ -15,10 +15,11 @@ public class HTTP_Server {
 	 Socket connectionSocket = welcomeSocket.accept();
 	 BufferedReader inFromClient = new BufferedReader(new InputStreamReader (connectionSocket.getInputStream()));
 	 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-	 System.out.println("Received: " );
-	 String clientSentence = inFromClient.readLine();
-	 System.out.println("Received: " + clientSentence);
-	 String serverarg[] = clientSentence.split("\\s+");
+	 String clientCommand = inFromClient.readLine();
+	 String clientHost = inFromClient.readLine();
+	 System.out.println("Received: " + clientCommand);
+	 System.out.println("Received2: " + clientHost);
+	 String serverarg[] = clientCommand.split("\\s+");
 	 String responseFromServer = executeCommand(serverarg);
 	 System.out.println(executeCommand(serverarg));
 	 //String capsSentence = clientSentence.toUpperCase() + '\n';
@@ -39,7 +40,7 @@ public class HTTP_Server {
 			   //VERWERKEN VAN HET GET COMMAND?
 			   //EMBEDDED IMAGES WEG KRIJGEN IN GET COMMAND
 			   //content-lenght or transfer encoding.
-			   responseFromServer = "HTTP/1.1 200 OK '\\n'";
+			    responseFromServer = "HTTP/1.1 200 OK \n";
 	
 			    URL url;
 			    InputStream is = null;
@@ -68,7 +69,6 @@ public class HTTP_Server {
 			   //For PUT and POST commands, your user should read a string from an interactive command prompt and send that onwards. 
 			   //These two commands will be tested with your HTTP server program.
 			   //user input should be appended to an existing file on the server.
-			   //https://stackoverflow.com/questions/5287538/how-can-i-get-the-user-input-in-java
 			   responseFromServer = "";
 			   return responseFromServer;
 		      
@@ -76,11 +76,12 @@ public class HTTP_Server {
 			   //For PUT and POST commands, your user should read a string from an interactive command prompt and send that onwards. 
 			   //These two commands will be tested with your HTTP server program.
 			   //user input stored in new text file on the server. (same directory)
-			   //https://stackoverflow.com/questions/5287538/how-can-i-get-the-user-input-in-java
 			   responseFromServer = "";
 			   return responseFromServer;
 			  
 		   case "HEAD" :
+			   
+			   
 			   responseFromServer = "";
 			   return responseFromServer;
 			  

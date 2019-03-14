@@ -3,11 +3,20 @@ import java.net.*;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Scanner;
 import java.io.*;
 //mainly use the Socket package, no third partys package or the HTTPURLconnection package
 //Should support HTTP/1.1 (dus schrijf bij message to server dat het deze versie is)
 public class HTTP_Client {
+	
+	
+	private static final String absolutePath = System.getProperty("user.dir") + "/Files/";
+	
+	
 	 public static void main(String argv[]) throws Exception{  //argv[] = ["HTTPCommand", "URI" , "port", HTTPVERSION]
+		 
+		 File Clientfile = CreateFile(absolutePath);
+		 
 		 String unedited_uri = argv[1];
 		 
 		 if (unedited_uri.startsWith("http://") == false)
@@ -25,64 +34,73 @@ public class HTTP_Client {
 		 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-		 String request = commandFromClient(argv, path) + System.lineSeparator() + "Host: " + Host;
-          outToServer.writeBytes(request); //chose: writeBytes, writeChars.
+		 String request = commandFromClient(argv, path, Host) + "\n";
+         outToServer.writeBytes(request); //chose: writeBytes, writeChars.
          
-//         outToServer.writeBytes(commandFromClient(argv, path));
-//         outToServer.writeBytes("Host: " + Host);$
-        
 //         StringBuilder responseBuffer = new StringBuilder();
 //         responseBuffer.append(inFromServer.readLine());
 //         System.out.println(responseBuffer);
 
          String inputLine;
 		 while ((inputLine = inFromServer.readLine()) != null) {
-             System.out.println(inputLine);}
-		 
- //WriteToFile(inputLine, ??); //write to file, store response in an HTML file locally
-             
-
+             System.out.println(inputLine);
+		 	 //writeFile(inputLine, Clientfile);
+             }
 		 
 		 //close stream?
 		 clientSocket.close(); //Always close your socket.
 	}
 
-	private static String commandFromClient(String argv[], String path) {
+	private static String commandFromClient(String argv[], String path, String host) {
 		String command = argv[0];
 		String commandToServer = new String();
 		switch (command) {
 			case "GET":
-				commandToServer = "GET " + path  + " HTTP/1.1" ;
-				System.out.println(commandToServer);
+				commandToServer = "GET " + path  + " HTTP/1.1\nHost:" + host ;
 				return commandToServer;
-			case "POST" : 
-				commandToServer = "POST " + path + " HTTP/1.1";
+			case "POST" :
+				System.out.println("Enter data for POST request here. End the request with a dubbel enter:");
+				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\n" + getUserInput();
 				return commandToServer;
 			case "PUT":
-				commandToServer = "PUT " + path + " HTTP/1.1";
+				System.out.println("Enter data for PUT request here. End the request with a tripple enter:");
+				commandToServer = "PUT " + path + " HTTP/1.1\nHost: " + host + "\n" + getUserInput();
 				return commandToServer;
 			case "HEAD" : 
-				commandToServer = "HEAD " + path + " HTTP/1.1" ;
+				commandToServer = "HEAD " + path + " HTTP/1.1\nHost:" + host ;
 				return commandToServer;
 			default:
 				return commandToServer;}
 	}
-//
-//	public static void CreateFile(String httpname) { //is this a correct use to make a new file?
-//		File htmlFile = new File("path/store/" + httpname +".html");
-//		//return file, en geef deze mee aan de client. steeds aan deze file toevoegen dan?
-//	}
-//	
-//	public static void WriteToFile(String inputLine, String httpname) throws IOException {
-//        FileOutputStream fos = new FileOutputStream("path/store/" + httpname +".html");
-//        DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
-//        outStream.writeUTF(inputLine); 
-//        outStream.close();
-//	}
-//	
-//	
-//	public static void EmbeddedObjects(){
-//		
+	
+	public static File CreateFile(String absolutepath) { //is this a correct use to make a new file?
+		File htmlFile = new File(absolutePath);
+		if (!htmlFile.exists()) {
+			htmlFile.mkdir();
+		}
+		return htmlFile;}
+	
+	public static void writeFile(String content, File clientfile) throws IOException {
+      FileOutputStream fos = new FileOutputStream(clientfile);
+      DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+      outStream.writeUTF(content); 
+      outStream.close();	
+	}
+	
+	private static String getUserInput() {
+	Scanner userInput = new Scanner(System.in);
+    String content = userInput.nextLine();
+    while (true) {
+        String newLine = userInput.nextLine();
+        content = content.concat("\n"+newLine);
+        if (content.endsWith("\n\n")){
+            content = content.substring(0,content.length()-2);
+            return content;
+            	
+        }
+     }}}
+	
+//	public static void EmbeddedObjects(){	
 //	}
 	//Scan local html file. Retrieve embedded images. store them locally as well (GET).
 	//retrieve embedded_objects: search the html file for <img retrieve from the src between the brackets.
@@ -103,7 +121,9 @@ public class HTTP_Client {
 //			e.printStackTrace();
 //		}
 //	}
-	//CreateFile(Http); //TODO: ik denk niet dat dit correct gemaakt is.
 	//TODO: third part of the assignment = filter out the ads. (How do you know wheter an image is an ad?)
-}
+
+//outToServer.writeBytes(commandFromClient(argv, path));
+//outToServer.writeBytes("Host: " + Host);
+
 
