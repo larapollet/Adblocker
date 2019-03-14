@@ -9,15 +9,17 @@ public class HTTP_Server {
 	//how to add third party client?? 
 	 public static void main(String argv[]) throws Exception
 	 {
-	 ServerSocket welcomeSocket = new ServerSocket(6789);
+	 ServerSocket welcomeSocket = new ServerSocket(8000);
 	 while(true)
 	 {
+	 System.out.println("gdverdomme");
 	 Socket connectionSocket = welcomeSocket.accept();
-	 BufferedReader inFromClient = new BufferedReader(new
-	 InputStreamReader (connectionSocket.getInputStream()));
-	 DataOutputStream outToClient = new DataOutputStream
-	 (connectionSocket.getOutputStream());
-	 String clientSentence = inFromClient.readLine(); //reads only one line: serverarg! Also needs the host?
+	 System.out.println("lol1");
+	 BufferedReader inFromClient = new BufferedReader(new InputStreamReader (connectionSocket.getInputStream()));
+	 System.out.println("lol");
+	 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+	 System.out.println("Received: " );
+	 String clientSentence = inFromClient.readLine();
 	 System.out.println("Received: " + clientSentence);
 	 String serverarg[] = clientSentence.split("\\s+");
 	 String responseFromServer = executeCommand(serverarg);
