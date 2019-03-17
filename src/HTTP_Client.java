@@ -72,6 +72,9 @@ public class HTTP_Client {
 		switch (command) {
 			case "GET":
 				commandToServer = "GET " + path  + " HTTP/1.1\nHost: " + host ;
+				//System.out.println(" get");
+				//System.out.println(commandToServer);
+
 				return commandToServer;
 			case "POST" :
 				System.out.println("Enter data for POST request here. End the request with a dubbel enter:");
