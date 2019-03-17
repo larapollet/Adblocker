@@ -60,6 +60,16 @@ public class HTTP_Client {
 		 clientSocket.close(); //Always close your socket.
 	}
 	 
+	 
+
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 	 /**
 	  * Returns the string-request that will be sent to the server, based on the given command, path and host.
 	  * @param command
@@ -71,20 +81,20 @@ public class HTTP_Client {
 		String commandToServer = new String();
 		switch (command) {
 			case "GET":
-				commandToServer = "GET " + path  + " HTTP/1.1\nHost: " + host + "\nContentlenght: 0";
+				commandToServer = "GET " + path  + " HTTP/1.1\nHost: " + host + "\nContent-lenght: 0";
 				return commandToServer;
 			case "POST" :
 				System.out.println("Enter data for POST request here. End the request with a dubbel enter:");
 				String input_post = getUserInput();
-				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\nContentlenght: " + input_post.length() + "\n" + input_post;
+				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\nContent-lenght: " + input_post.length() + "\n" + input_post;
 				return commandToServer;
 			case "PUT":
 				System.out.println("Enter data for PUT request here. End the request with a tripple enter:");
 				String input_put = getUserInput();
-				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\nContentlenght: " + input_put.length() + "\n" + input_put;
+				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\nContent-lenght: " + input_put.length() + "\n" + input_put;
 				return commandToServer;
 			case "HEAD" : 
-				commandToServer = "HEAD " + path + " HTTP/1.1\nHost: " + host + "\nContentlenght: 0" ;
+				commandToServer = "HEAD " + path + " HTTP/1.1\nHost: " + host + "\nContent-lenght: 0" ;
 				return commandToServer;
 			default:
 				return commandToServer;}

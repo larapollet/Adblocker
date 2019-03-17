@@ -1,7 +1,7 @@
-import java.net.Socket;
 import java.awt.List;
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class HTTP_Server {
 	
@@ -14,6 +14,7 @@ public class HTTP_Server {
 	 {
 	 Socket connectionSocket = welcomeSocket.accept();
 	 BufferedReader inFromClient = new BufferedReader(new InputStreamReader (connectionSocket.getInputStream()));
+	 DataInputStream inFromClientcont = new DataInputStream(connectionSocket.getInputStream());
 	 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 	 String clientCommand = inFromClient.readLine();
 	 String clientHost = inFromClient.readLine();
@@ -32,41 +33,131 @@ public class HTTP_Server {
 	 String responseFromServer = executeCommand(serverarg[0], serverarg[1], Hostarg[1], contentFromClient);
 	 System.out.println(executeCommand(serverarg[0], serverarg[1],Hostarg[1], contentFromClient));
 	 outToClient.writeBytes(responseFromServer);
-	 
+	 // changing string type to uri then to url
+	 URI uri = URI.create(serverarg[1]);
+	 URL url = uri.toURL();
 	 }}
+	 
+	 
+	 //??
+	 private static boolean Transfer_Encoding(DataInputStream inputStream) {
+         StringBuilder responseBuffer = new StringBuilder();
+         
+         // Look for relevant headers: content-length, transfer-encoding.
+         for (String line : responseBuffer.toString().split("\n")) {
+             if (line.toLowerCase().startsWith("content-length:")) {
+            	 return false;
+             }
+             if (line.toLowerCase().contains("chunked")){
+                 return true;
+             }}
+		return (Boolean) null;} // throw exception ?
+         
+	 /**
+	  * Read body of content-length message from inputstream.
+	  * @param inputStream
+	  * @return
+	 * @throws IOException 
+	  */
+	 
+//	 private static  read_message(DataInputStream inputStream) {
+//		 int length = 0;
+//         //boolean chunked = false;
+//         StringBuilder responseBuffer = new StringBuilder();
+//         
+//         // Look for relevant headers: content-length, transfer-encoding.
+//         for (String line : responseBuffer.toString().split("\n")) {
+//             if (line.toLowerCase().startsWith("content-length:")) {
+//                 String[] lineParts = line.split(":");
+//                 length = Integer.parseInt(lineParts[1]);
+//             }
+//             if (line.toLowerCase().contains("chunked")){
+//                 chunked = true;
+//             }
+//             String[0] lst = ;
+//             
+//         }
+//		return null;
+//		 
+//	 }
+	 
+	 
+	 /**
+	  * Read body of chunked message from inputstream.
+	  * @param inputStream
+	  * @return
+	 * @throws IOException 
+	  */
+	 private static byte[] read_chunks(DataInputStream inputStream) throws IOException {
+	        int length = -1;
+	        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	        while (length != 0){
+	            StringBuilder responseBuffer = new StringBuilder();
 
-	private static String executeCommand (String command, String path, String Host, String content) throws IOException { //serverarg = command , path, HTTP/1.1
+	            // Read the first line
+	            while (!responseBuffer.toString().endsWith("\n")) {
+	                responseBuffer.append((char) inputStream.readByte());
+	            }
+
+	            // Retrieve the chunk length
+	            String[] firstline = responseBuffer.toString().split(";");
+	            length = Integer.parseInt(firstline[0].replace("\n",""), 16); //only interested in first part, extra paramters ignored
+
+	            // Read the chunk
+	            buffer.write(readBody(inputStream, length));
+	            if (length!=0) {
+	                inputStream.readByte();
+	                inputStream.readByte();
+	            }
+	        } // repeat same process for next chunk
+	        return buffer.toByteArray();
+	    }	 
+
+
+	/**
+	 * Read from the inputStream for a length "length" and returns it in a byte array.
+	 * @throws IOException
+	 */
+	private static byte[] readBody(DataInputStream inputStream, int length) throws IOException {
+	    int byteCount = 0;
+	    byte[] bytes = new byte[length];
+	    while (byteCount != length) {
+	        byteCount += inputStream.read(bytes, byteCount, length - byteCount); // nb of bytes read is returned as an int 
+	    }
+	    return bytes;
+	}
+
+	
+	private static String executeCommand (String command, String path, String Host, String inFromClient) throws IOException { //serverarg = command , path, HTTP/1.1
 		//400 bad request: when host header not added.
 		String responseFromServer = new String();
 		String absolutePath = System.getProperty("user.dir") + "/Serverfile/" + path;
 		switch(command) {
 		   case "GET" :
-			   //If-modified-since-header needed.
-			   //als server niet responds: 404 not found?
-			   //content lenght or chunked headers!
-			   //VERWERKEN VAN HET GET COMMAND?
-			   //EMBEDDED IMAGES WEG KRIJGEN IN GET COMMAND
-			   //content-lenght or transfer encoding.
-			   //als je wilt weten of je request gedaan is: content length is niet altijd even accuraat. Check de laatste aantal bytes.
-			    URL url;
-			    InputStream is = null;
-			    BufferedReader buffer;
-			    String line;
-			
-			    try {
-			        url = new URL(Host + path);
-			        is = url.openStream();  // throws an IOException
-			        buffer = new BufferedReader(new InputStreamReader(is));
-			        responseFromServer = "HTTP/1.1 200 OK \n";
-			        System.out.println("oeps");
-			        while ((line = buffer.readLine()) != null) {
-			            responseFromServer += line + "\n";
-			        }
-			    } catch (MalformedURLException mue) {
-			    		responseFromServer = "HTTP/1.1 404 Not Found/Bad Request \n";
-			    } catch (IOException ioe) {
-			         responseFromServer = "HTTP/1.1 404 Not Found \n"; //Is dit de juiste error code?
-			    } 
+//			   //If-modified-since-header needed.
+//			   //als server niet responds: 404 not found?
+//			   //content lenght or chunked headers!
+//			   //VERWERKEN VAN HET GET COMMAND?
+//			   //EMBEDDED IMAGES WEG KRIJGEN IN GET COMMAND
+//			   //content-lenght or transfer encoding.
+//			   //als je wilt weten of je request gedaan is: content length is niet altijd even accuraat. Check de laatste aantal bytes.
+//			   
+//
+////			   URL url = URI.create(path).toURL();
+////			   InputStream stream = url.openConnection().getInputStream();
+//			   byte[] bytes;
+//			   //check if Transfer-Encoding: chunked in header
+//			   if (Transfer_Encoding(executeCommand("HEAD", path, Host, inFromClient))) {
+//				   // do chunked
+//				   
+//				   String string = new String(read_chunks(inFromClient), "UTF-8"); //certain charset to convert byte to string
+//				   return string;
+//			   }
+//			   else {
+//				   // do Content-length
+//			   }
+//			   
+//			   
 			   return responseFromServer;
 		   
 		/**
@@ -76,7 +167,7 @@ public class HTTP_Server {
 		   case "POST" :
 		       File postfile = new File(absolutePath);
 		       try(BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath, true)))
-		       {output.append(content);}
+		       {output.append(inFromClient);}
 			   responseFromServer = "HTTP/1.1 200 OK \n";
 			   return responseFromServer;
 		      
@@ -89,10 +180,10 @@ public class HTTP_Server {
 			       		//File putfile = new File(new_path);
 		       			number += 1;
 		       			try (BufferedWriter output = new BufferedWriter(new FileWriter(new_path, true)))
-		       				{output.append(content);}}}
+		       				{output.append(inFromClient);}}}
 		        
 		       else 
-		       try (BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath, true))) {output.append(content);}
+		       try (BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath, true))) {output.append(inFromClient);}
 		    	   		
 
 			   //user input stored in new text file on the server. (same directory)
@@ -100,7 +191,18 @@ public class HTTP_Server {
 			   return responseFromServer;
 
 		   case "HEAD" :
+			   
 			   responseFromServer = "";
+			   InputStreamReader in = new InputStreamReader(System.in);
+	           BufferedReader br = new BufferedReader(in);
+	           boolean a =true ;
+	           while(a == true) {
+	        	   String line = br.readLine();
+	        	   responseFromServer+= "\n" + line;
+	        	   if (line == "\n") {
+	        		   a= false;
+	        	   }
+	           }
 			   return responseFromServer;
 			  
 		   default : 
@@ -108,5 +210,6 @@ public class HTTP_Server {
 			   return responseFromServerDefault;
 		}
 	}}
+
 //https://stackoverflow.com/questions/238547/how-do-you-programmatically-download-a-webpage-in-java
 //Also shows how to catch an exception here. -> 400 bad request?
