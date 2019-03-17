@@ -21,7 +21,7 @@ public class HTTP_Client {
 	 */
 	 public static void main(String argv[]) throws Exception{  //argv[] = ["HTTPCommand", "URI" , "port", HTTPVERSION]
 		 
-		 File Clientfile = CreateFile(absolutePath);
+	//	 File Clientfile = CreateFile(absolutePath);
 		 
 		 String command = argv[0];
 		 String unedited_uri = argv[1];
@@ -71,36 +71,38 @@ public class HTTP_Client {
 		String commandToServer = new String();
 		switch (command) {
 			case "GET":
-				commandToServer = "GET " + path  + " HTTP/1.1\nHost: " + host ;
+				commandToServer = "GET " + path  + " HTTP/1.1\nHost: " + host + "\nContentlenght: 0";
 				return commandToServer;
 			case "POST" :
 				System.out.println("Enter data for POST request here. End the request with a dubbel enter:");
-				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\n" + getUserInput();
+				String input_post = getUserInput();
+				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\nContentlenght: " + input_post.length() + "\n" + input_post;
 				return commandToServer;
 			case "PUT":
 				System.out.println("Enter data for PUT request here. End the request with a tripple enter:");
-				commandToServer = "PUT " + path + " HTTP/1.1\nHost: " + host + "\n" + getUserInput();
+				String input_put = getUserInput();
+				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\nContentlenght: " + input_put.length() + "\n" + input_put;
 				return commandToServer;
 			case "HEAD" : 
-				commandToServer = "HEAD " + path + " HTTP/1.1\nHost: " + host ;
+				commandToServer = "HEAD " + path + " HTTP/1.1\nHost: " + host + "\nContentlenght: 0" ;
 				return commandToServer;
 			default:
 				return commandToServer;}
 	}
 	
-	public static File CreateFile(String absolutepath) { //is this a correct use to make a new file?
-		File htmlFile = new File(absolutePath);
-		if (!htmlFile.exists()) {
-			htmlFile.mkdir();
-		}
-		return htmlFile;}
-	
-	public static void writeFile(String content, File clientfile) throws IOException {
-      FileOutputStream fos = new FileOutputStream(clientfile);
-      DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
-      outStream.writeUTF(content); 
-      outStream.close();	
-	}
+//	public static File CreateFile(String absolutepath) { //is this a correct use to make a new file?
+//		File htmlFile = new File(absolutePath);
+//		if (!htmlFile.exists()) {
+//			htmlFile.mkdir();
+//		}
+//		return htmlFile;}
+//	
+//	public static void writeFile(String content, File clientfile) throws IOException {
+//      FileOutputStream fos = new FileOutputStream(clientfile);
+//      DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+//      outStream.writeUTF(content); 
+//      outStream.close();	
+//	}
 	
 	/**
 	 * Function to scan the strings written by the user. (Used for input prompts PUT and POST)
@@ -114,6 +116,7 @@ public class HTTP_Client {
         content = content.concat("\n"+newLine);
         if (content.endsWith("\n\n")){
             content = content.substring(0,content.length()-2);
+            userInput.close();
             return content;
             	
         }

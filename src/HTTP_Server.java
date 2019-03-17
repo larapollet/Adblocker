@@ -17,20 +17,28 @@ public class HTTP_Server {
 	 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 	 String clientCommand = inFromClient.readLine();
 	 String clientHost = inFromClient.readLine();
+	 String clientContentLenght = inFromClient.readLine();
+	 String contentlenght[] = clientContentLenght.split("\\s+");
+	 String contentFromClient = "";
+	 System.out.println("Received3: " +clientContentLenght);
 	 System.out.println("Received: " + clientCommand);
 	 System.out.println("Received2: " + clientHost);
+	 while (contentFromClient.length() < Integer.parseInt(contentlenght[1])) {
+		 contentFromClient += inFromClient.readLine() + "\n";
+		 System.out.println("Received2: " + contentFromClient);}
+	 System.out.println(contentFromClient);
 	 String serverarg[] = clientCommand.split("\\s+");
 	 String Hostarg[] = clientHost.split("\\s+");
-	 String responseFromServer = executeCommand(serverarg[0], serverarg[1], Hostarg[1]);
-	 System.out.println(executeCommand(serverarg[0], serverarg[1],Hostarg[1]));
-	 //String capsSentence = clientSentence.toUpperCase() + '\n';
+	 String responseFromServer = executeCommand(serverarg[0], serverarg[1], Hostarg[1], contentFromClient);
+	 System.out.println(executeCommand(serverarg[0], serverarg[1],Hostarg[1], contentFromClient));
 	 outToClient.writeBytes(responseFromServer);
 	 
 	 }}
 
-	private static String executeCommand (String command, String path, String Host) { //serverarg = command , path, HTTP/1.1
+	private static String executeCommand (String command, String path, String Host, String content) throws IOException { //serverarg = command , path, HTTP/1.1
 		//400 bad request: when host header not added.
 		String responseFromServer = new String();
+		String absolutePath = System.getProperty("user.dir") + "/Serverfile/" + path;
 		switch(command) {
 		   case "GET" :
 			   //If-modified-since-header needed.
@@ -61,16 +69,32 @@ public class HTTP_Server {
 			    } 
 			   return responseFromServer;
 		   
+		/**
+		 * Independent of the fact that the file already exist or not. the content will be written. Either in an existing file
+		 * or in a new file with this absolute path.
+		 */
 		   case "POST" :
-			   //For the POST command, the user input should be appended to an existing file on the server.
-			   //If the file does not exist, then the file should be created.
-			   //For PUT and POST commands, your user should read a string from an interactive command prompt and send that onwards. 
-			   //These two commands will be tested with your HTTP server program.
-			   //user input should be appended to an existing file on the server.
+		       File postfile = new File(absolutePath);
+		       try(BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath, true)))
+		       {output.append(content);}
 			   responseFromServer = "HTTP/1.1 200 OK \n";
 			   return responseFromServer;
 		      
 		   case "PUT" :
+		       File putfile = new File(absolutePath);
+		       if (putfile.createNewFile() == false) {
+		    	   		int number = 1;
+		       		while (putfile.createNewFile() == false) {
+		       			String new_path = absolutePath + number;
+			       		//File putfile = new File(new_path);
+		       			number += 1;
+		       			try (BufferedWriter output = new BufferedWriter(new FileWriter(new_path, true)))
+		       				{output.append(content);}}}
+		        
+		       else 
+		       try (BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath, true))) {output.append(content);}
+		    	   		
+
 			   //user input stored in new text file on the server. (same directory)
 			   responseFromServer = "HTTP/1.1 200 OK \n";
 			   return responseFromServer;
