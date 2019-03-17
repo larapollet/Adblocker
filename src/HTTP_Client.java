@@ -91,7 +91,7 @@ public class HTTP_Client {
 			case "PUT":
 				System.out.println("Enter data for PUT request here. End the request with a tripple enter:");
 				String input_put = getUserInput();
-				commandToServer = "POST " + path + " HTTP/1.1\nHost: "+ host + "\nContent-lenght: " + input_put.length() + "\n" + input_put;
+				commandToServer = "PUT " + path + " HTTP/1.1\nHost: "+ host + "\nContent-lenght: " + input_put.length() + "\n" + input_put;
 				return commandToServer;
 			case "HEAD" : 
 				commandToServer = "HEAD " + path + " HTTP/1.1\nHost: " + host + "\nContent-lenght: 0" ;

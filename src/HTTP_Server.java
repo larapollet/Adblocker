@@ -174,19 +174,18 @@ public class HTTP_Server {
 		   case "PUT" :
 		       File putfile = new File(absolutePath);
 		       if (putfile.createNewFile() == false) {
+		    	   		Boolean create = false;
 		    	   		int number = 1;
-		       		while (putfile.createNewFile() == false) {
-		       			String new_path = absolutePath + number;
-			       		//File putfile = new File(new_path);
+		    	   		String new_path = absolutePath+ "/"+ number;
+		       		while (create == false) {
+			       		File new_file = new File(new_path);
+			       		create = new_file.createNewFile();
 		       			number += 1;
-		       			try (BufferedWriter output = new BufferedWriter(new FileWriter(new_path, true)))
-		       				{output.append(inFromClient);}}}
-		        
+		       			new_path = absolutePath + number;}
+		       		try (BufferedWriter output = new BufferedWriter(new FileWriter(new_path, true)))
+		       				{output.append(inFromClient);}}
 		       else 
 		       try (BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath, true))) {output.append(inFromClient);}
-		    	   		
-
-			   //user input stored in new text file on the server. (same directory)
 			   responseFromServer = "HTTP/1.1 200 OK \n";
 			   return responseFromServer;
 
