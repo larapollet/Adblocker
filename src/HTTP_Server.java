@@ -131,7 +131,7 @@ public class HTTP_Server {
 	private static String executeCommand (String command, String path, String Host, String inFromClient) throws IOException { //serverarg = command , path, HTTP/1.1
 		//400 bad request: when host header not added.
 		String responseFromServer = new String();
-		String absolutePath = System.getProperty("user.dir") + "/Serverfile/" + path;
+		String absolutePath = System.getProperty("user.dir") + "/Serverfile" + path;
 		switch(command) {
 		   case "GET" :
 //			   //If-modified-since-header needed.
@@ -170,18 +170,19 @@ public class HTTP_Server {
 		       {output.append(inFromClient);}
 			   responseFromServer = "HTTP/1.1 200 OK \n";
 			   return responseFromServer;
-		      
+			   
 		   case "PUT" :
 		       File putfile = new File(absolutePath);
 		       if (putfile.createNewFile() == false) {
 		    	   		Boolean create = false;
-		    	   		int number = 1;
-		    	   		String new_path = absolutePath+ "/"+ number;
+		    	   		int number = 0;
+		    	   		String new_path = System.getProperty("user.dir") + "/Serverfile" + Integer.toString(number) + path;
+		    	   		System.out.println(new_path);
 		       		while (create == false) {
+		       			new_path = System.getProperty("user.dir") + "/Serverfile" + Integer.toString(number) + path;
 			       		File new_file = new File(new_path);
 			       		create = new_file.createNewFile();
-		       			number += 1;
-		       			new_path = absolutePath + number;}
+		       			number += 1;}
 		       		try (BufferedWriter output = new BufferedWriter(new FileWriter(new_path, true)))
 		       				{output.append(inFromClient);}}
 		       else 
