@@ -60,6 +60,16 @@ public class HTTP_Client {
 		 clientSocket.close(); //Always close your socket.
 	}
 	 
+	 
+
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 	 /**
 	  * Returns the string-request that will be sent to the server, based on the given command, path and host.
 	  * @param command
