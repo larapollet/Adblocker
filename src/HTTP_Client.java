@@ -81,7 +81,8 @@ public class HTTP_Client {
 		String commandToServer = new String();
 		switch (command) {
 			case "GET":
-				commandToServer = "GET " + path  + " HTTP/1.1\nHost: " + host + "\nContent-lenght: 0";
+				String input_get = getUserInput();
+				commandToServer = "GET " + path  + " HTTP/1.1\nHost: " + host + "\nContent-lenght: "+ input_get.length() + "\n" + input_get;
 				return commandToServer;
 			case "POST" :
 				System.out.println("Enter data for POST request here. End the request with a dubbel enter:");
@@ -93,8 +94,9 @@ public class HTTP_Client {
 				String input_put = getUserInput();
 				commandToServer = "PUT " + path + " HTTP/1.1\nHost: "+ host + "\nContent-lenght: " + input_put.length() + "\n" + input_put;
 				return commandToServer;
-			case "HEAD" : 
-				commandToServer = "HEAD " + path + " HTTP/1.1\nHost: " + host + "\nContent-lenght: 0" ;
+			case "HEAD" :
+				String input_head = getUserInput();
+				commandToServer = "HEAD " + path + " HTTP/1.1\nHost: " + host + "\nContent-lenght:" + input_head.length() + "\n" + input_head;
 				return commandToServer;
 			default:
 				return commandToServer;}
