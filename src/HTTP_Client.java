@@ -10,7 +10,7 @@ import java.io.*;
 public class HTTP_Client {
 	
 	
-	private static final String absolutePath = System.getProperty("user.dir") + "/Files/";
+	private static final String absolutePath = System.getProperty("user.dir") + "/ClientFile";
 	
 	/**
 	 * Http client that makes an connection with the server and sends it request.
@@ -21,7 +21,7 @@ public class HTTP_Client {
 	 */
 	 public static void main(String argv[]) throws Exception{  //argv[] = ["HTTPCommand", "URI" , "port", HTTPVERSION]
 		 
-	//	 File Clientfile = CreateFile(absolutePath);
+		 //File Clientfile = CreateDirectory(absolutePath);
 		 
 		 String command = argv[0];
 		 String unedited_uri = argv[1];
@@ -53,21 +53,12 @@ public class HTTP_Client {
          String inputLine;
 		 while ((inputLine = inFromServer.readLine()) != null) {
              System.out.println(inputLine);
-		 	 //writeFile(inputLine, Clientfile);
+		 	 WriteFile(path,inputLine + "\n");
              }
 		 
 		 //close stream?
 		 clientSocket.close(); //Always close your socket.
 	}
-	 
-	 
-
-	 
-	 
-	 
-	 
-	 
-	 
 	 
 	 
 	 /**
@@ -100,19 +91,26 @@ public class HTTP_Client {
 				return commandToServer;}
 	}
 	
-//	public static File CreateFile(String absolutepath) { //is this a correct use to make a new file?
+	public static void WriteFile(String path, String content) throws IOException {
+		File htmlFile = new File(absolutePath + path);
+//		if (!htmlFile.createNewFile()) {
+			try(BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath + path, true)))
+		    {output.append(content);}}
+//		}
+//		else {
+//			htmlFile.createNewFile();
+//			try(BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath + path, true)))
+//		    {output.append(content);}
+//		} 
+//			}
+	
+//	public static File CreateDirectory( String absolutepath) {
 //		File htmlFile = new File(absolutePath);
 //		if (!htmlFile.exists()) {
 //			htmlFile.mkdir();
 //		}
 //		return htmlFile;}
-//	
-//	public static void writeFile(String content, File clientfile) throws IOException {
-//      FileOutputStream fos = new FileOutputStream(clientfile);
-//      DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
-//      outStream.writeUTF(content); 
-//      outStream.close();	
-//	}
+
 	
 	/**
 	 * Function to scan the strings written by the user. (Used for input prompts PUT and POST)

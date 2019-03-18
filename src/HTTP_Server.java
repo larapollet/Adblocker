@@ -20,6 +20,7 @@ public class HTTP_Server {
 	 String clientHost = inFromClient.readLine();
 	 String clientContentLenght = inFromClient.readLine();
 	 String contentlenght[] = clientContentLenght.split("\\s+");
+	 System.out.println(contentlenght[1]);
 	 String contentFromClient = "";
 	 System.out.println("Received3: " +clientContentLenght);
 	 System.out.println("Received: " + clientCommand);
