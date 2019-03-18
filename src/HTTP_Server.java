@@ -1,6 +1,9 @@
 import java.awt.List;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class HTTP_Server {
@@ -20,23 +23,18 @@ public class HTTP_Server {
 	 String clientHost = inFromClient.readLine();
 	 String clientContentLenght = inFromClient.readLine();
 	 String contentlenght[] = clientContentLenght.split("\\s+");
-	 System.out.println(contentlenght[1]);
 	 String contentFromClient = "";
 	 System.out.println("Received3: " +clientContentLenght);
 	 System.out.println("Received: " + clientCommand);
 	 System.out.println("Received2: " + clientHost);
 	 while (contentFromClient.length() < Integer.parseInt(contentlenght[1])) {
-		 contentFromClient += inFromClient.readLine() + "\n";
-		 System.out.println("Received2: " + contentFromClient);}
-	 System.out.println(contentFromClient);
+		 contentFromClient += inFromClient.readLine() + "\n";}
 	 String serverarg[] = clientCommand.split("\\s+");
 	 String Hostarg[] = clientHost.split("\\s+");
-	 String responseFromServer = executeCommand(serverarg[0], serverarg[1], Hostarg[1], contentFromClient);
-	 System.out.println(executeCommand(serverarg[0], serverarg[1],Hostarg[1], contentFromClient));
-	 outToClient.writeBytes(responseFromServer);
+	 String responseFromServers = executeCommand(serverarg[0], serverarg[1], Hostarg[1], contentFromClient);
+	 outToClient.writeBytes(responseFromServers);
 	 // changing string type to uri then to url
-	 URI uri = URI.create(serverarg[1]);
-	 URL url = uri.toURL();
+
 	 }}
 	 
 	 
@@ -128,7 +126,7 @@ public class HTTP_Server {
 	    return bytes;
 	}
 
-	
+	//ArrayList myList = new ArrayList(); // used for HEAD
 	private static String executeCommand (String command, String path, String Host, String inFromClient) throws IOException { //serverarg = command , path, HTTP/1.1
 		//400 bad request: when host header not added.
 		String responseFromServer = new String();
@@ -159,6 +157,15 @@ public class HTTP_Server {
 //			   }
 //			   
 //			   
+			   responseFromServer = "";
+			   BufferedReader bufReader = new BufferedReader(new StringReader(inFromClient));
+			   String line=null;
+			   while( (line=bufReader.readLine()) != null ){
+				   responseFromServer+= "\n" + line;
+				   System.out.println("heeyyy" + responseFromServer);
+
+			   }
+			   System.out.println("heeyyy" + responseFromServer);
 			   return responseFromServer;
 		   
 		/**
@@ -190,21 +197,33 @@ public class HTTP_Server {
 		       try (BufferedWriter output = new BufferedWriter(new FileWriter(absolutePath, true))) {output.append(inFromClient);}
 			   responseFromServer = "HTTP/1.1 200 OK \n";
 			   return responseFromServer;
-
-		   case "HEAD" :
 			   
+		   case "HEAD" :
 			   responseFromServer = "";
-			   InputStreamReader in = new InputStreamReader(System.in);
-	           BufferedReader br = new BufferedReader(in);
-	           boolean a =true ;
-	           while(a == true) {
-	        	   String line = br.readLine();
-	        	   responseFromServer+= "\n" + line;
-	        	   if (line == "\n") {
-	        		   a= false;
-	        	   }
-	           }
+			   BufferedReader bufReader1 = new BufferedReader(new StringReader(inFromClient));
+			   String line1=null;
+			   while( (line1=bufReader1.readLine()) != "\n" ){
+				   responseFromServer+= "\n" + line1;
+				   System.out.println("heeyyy" + responseFromServer);
+
+			   }
+			   System.out.println("heeyyy" + responseFromServer);
 			   return responseFromServer;
+			   
+			   
+//			   responseFromServer = "";
+//			   InputStreamReader in = new InputStreamReader(System.in);
+//	           BufferedReader br = new BufferedReader(in);
+//	           boolean a =true ;
+//	           while(a == true) {
+//	        	   String line = br.readLine();
+//	        	   responseFromServer+= "\n" + line;
+//	        	   if (line == "\n") {
+//	        		   a= false;
+//	        	   }
+//	           }
+//	           System.out.println(responseFromServer);
+
 			  
 		   default : 
 			   String responseFromServerDefault = "HTTP/1.1 400 Bad Request";
